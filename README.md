@@ -1,4 +1,4 @@
-PDF Generator From HTML Template
+Headless PDF Generator From HTML Template
 
 # Prerequisites
 
