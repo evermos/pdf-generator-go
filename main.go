@@ -44,9 +44,10 @@ func main() {
 			footerPath = filepath.Join(*templateDir, filename)
 		} else if filename == "header.html" {
 			headerPath = filepath.Join(*templateDir, filename)
+		} else {
+			filePath := filepath.Join(*templateDir, filename)
+			files = append(files, filePath)
 		}
-		filePath := filepath.Join(*templateDir, filename)
-		files = append(files, filePath)
 	}
 
 	// merge template
