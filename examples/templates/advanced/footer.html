@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<head lang="en">
+  <title>Footer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .footer__remark {
+      width: 100%;
+      display: -webkit-box;
+      -webkit-box-pack: justify;
+    }
+
+    .footer__remark p {
+      width: 50%;
+      text-align: center;
+      font-style: italic;
+    }
+
+    .footer__endline {
+      width: 70%;
+      margin: 48px 15% 16px;
+    }
+
+    .footer__pagination {
+      text-align: right;
+    }
+  </style>
+  <script>
+    function getParam(name) {
+      const match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+      return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+    }
+
+    function setFooter() {
+      const page = document.getElementById("page")
+      const topage = document.getElementById("topage")
+      page.textContent = getParam("page")
+      topage.textContent = getParam("topage")
+    }
+  </script>
+</head>
+<body onload="setFooter()">
+<footer id="footer">
+  <div class="footer__remark">
+    <p>Invoice ini sah dan berasal dari sistem Evermos.</p>
+    <p></p>
+  </div>
+  <hr class="footer__endline">
+  <p class="footer__pagination">Page <span id="page">_</span> of <span id="topage">_</span></p>
+</footer>
+</body>

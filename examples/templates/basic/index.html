@@ -1,0 +1,41 @@
+{{ define "htmlIndex" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple PDF</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  {{ range $page := . }}
+  <h1>{{ $page.title }}</h1>
+  <h2>Basic Text</h2>
+  <p>This is placeholder text that always shows up. Vis reprehendunt nostrum aenean unum accommodare nonumes. Aliquet fusce porro consetetur dolore alterum urbanitas indoctum. Taciti mel varius eruditi tincidunt option oratio vulputate constituam. Persequeris his natum error nec vocibus neque senserit. Verear debet tantas curae mediocritatem harum.</p>
+  <h2>Conditional Text</h2>
+    {{ if $page.isActive }}
+    <p>This text only shows up when attribute <code>.isActive</code> is true.</p>
+    {{ end }}
+  <h2>List Iteration</h2>
+  <ul>
+    {{ range $item := $page.list }}
+    <li>{{ $item }}</li>
+    {{ end}}
+  </ul>
+  <h2>References</h2>
+  <p>Read more about the usage of the syntax used here in their respective docs:</p>
+  <ol>
+    <li><a href="https://wkhtmltopdf.org/index.html"><code>wkhtmltopdf</code></a></li>
+    <li><a href="https://pkg.go.dev/html/template"><code>html/template</code></a></li>
+    <li><a href="https://pkg.go.dev/text/template"><code>text/template</code></a></li>
+  </ol>
+  {{ end }}
+</body>
+</html>
+{{ end }}

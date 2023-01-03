@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Invoice</title>
+  <style>
+    * {
+      font-family: Roboto, sans-serif;
+      /*font-size: 12px;*/
+    }
+    body {
+      width: 100%;
+      margin: 0;
+      padding: 50px;
+      box-sizing: border-box;
+      /* A4 */
+      /*width: 21cm;*/
+      /*min-height: 29.7cm;*/
+      /*height: 29.7cm;*/
+    }
+    p {
+      margin-top: unset;
+      color: #707070;
+    }
+    strong {
+      color: #141414;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th {
+      background-color: #E6EDEE;
+      padding: 12px;
+      text-align: right;
+    }
+    th:first-child {
+      text-align: left;
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
+    th:last-child {
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+    td {
+      text-align: right;
+      border-bottom: 1px dashed #dddddd;
+      padding: 8px 12px;
+    }
+    td:first-child {
+      text-align: left;
+    }
+    td p {
+      margin-bottom: 0;
+    }
+
+    .container {
+      /*border: 1px solid #eee;*/
+      /*background-color: #fafafa;*/
+      /*height: 100%;*/
+      /*page-break-after: always;*/
+    }
+    .header {
+      display: -webkit-box;
+      display: flex;
+      -webkit-box-pack: justify;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .logo {
+      display: -webkit-box;
+      display: flex;
+      align-items: center;
+    }
+    .invoice {
+      text-align: right;
+    }
+    .invoice__title {
+      margin-bottom: 0;
+      font-weight: 700;
+      color: #004751;
+    }
+    .invoice__number {
+      margin-bottom: 0;
+    }
+    .seller {
+      display: -webkit-box;
+      display: flex;
+      -webkit-box-pack: justify;
+      justify-content: space-between;
+    }
+    .seller > div {
+      flex: 1;
+      width: 50%;
+    }
+    .seller__evermos {
+      margin-right: 32px;
+      line-height: 20px;
+    }
+    .products {
+      margin-bottom: 8px;
+    }
+    .product__weight {
+      font-size: 10px;
+    }
+    .summary {
+      width: 65%;
+      margin-left: auto;
+      margin-bottom: 14px;
+      border: 1px solid #dddddd;
+      border-radius: 8px;
+      padding: 12px 0;
+    }
+    .summary p {
+      margin-bottom: 0;
+    }
+    .summary__section {
+      display: -webkit-box;
+      display: flex;
+      -webkit-box-pack: justify;
+      justify-content: space-between;
+      padding: 0 12px;
+    }
+    .summary__section:not(:last-child) {
+      margin-bottom: 8px;
+    }
+    .summary__value {
+      text-align: right;
+      color: #141414;
+      font-weight: 700;
+    }
+    .divider {
+      border: 0;
+      border-bottom: 1px solid #dddddd;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        <img src="data:image/png;base64,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" alt="logo" width="156">
+      </div>
+      <div class="invoice">
+        <p class="invoice__title">INVOICE</p>
+        <p class="invoice__number">No. Invoice <strong>xxxxx</strong></p>
+      </div>
+    </header>
+    <section class="seller">
+      <div class="seller__name">
+        <p><strong>Diterbitkan Atas Name</strong></p>
+        <p>Penjual : <strong>xxxxx</strong></p>
+        <p class="seller__evermos">PT Setiap Hari Dipakai
+          <br>Jalan Sindang Sirna No. 38 , Kel. Gegerkalong, Kec. Sukasari, Kota Bandung, Jawa Barat, 40153
+          <br>NPWP : 86.440.583.2-423.000
+        </p>
+      </div>
+      <div class="seller__address">
+        <p><strong>Untuk Alamat xxxxx</strong></p>
+        <p><strong>xxxxx</strong> (+62xxxxx)</p>
+        <p>Molestiae senectus dolor oporteat civibus adolescens detraxit veri utamur xxxxx xxxxx xxxxx xxxxx.</p>
+        <p>Tanggal Pembelian : <strong>xxxxx</strong></p>
+      </div>
+    </section>
+    <section class="products">
+      <p><em>Harga sudah termasuk PPN</em></p>
+      <table style="width: 100%">
+        <tr>
+          <th>Nama Produk</th>
+          <th>Jumlah</th>
+          <th>Harga Satuan</th>
+          <th>Harga</th>
+        </tr>
+        <tr>
+          <td>
+            <p class="product__name"><strong>xxxxx</strong></p>
+            <p class="product__weight">Berat: xxxxx</p>
+          </td>
+          <td>xxxxx</td>
+          <td>xxxxx</td>
+          <td>xxxxx</td>
+        </tr>
+        <tr>
+          <td>
+            <p class="product__name"><strong>xxxxx</strong></p>
+            <p class="product__weight">Berat: xxxxx</p>
+          </td>
+          <td>xxxxx</td>
+          <td>xxxxx</td>
+          <td>xxxxx</td>
+        </tr>
+      </table>
+    </section>
+    <section class="summary">
+      <div class="summary__section">
+        <p class="summary__label"><strong>Total Harga (xxxxx)</strong></p>
+        <p class="summary__value">xxxxx</p>
+      </div>
+      <div class="summary__section">
+        <div class="summary__label">
+          <p>Total Ongkir (xxxxx)</p>
+          <p>xxxxx</p>
+        </div>
+        <p class="summary__value">xxxxx</p>
+      </div>
+      <hr class="divider">
+      <div class="summary__section">
+        <p class="summary__label"><strong>Total Belanja xxxxx</strong></p>
+        <p class="summary__value">xxxxx</p>
+      </div>
+    </section>
+<!--    <hr class="divider">-->
+<!--    <hr class="divider">-->
+  </div>
+</body>
+</html>

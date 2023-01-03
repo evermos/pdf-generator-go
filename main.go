@@ -4,40 +4,72 @@ import (
 	"bytes"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"github.com/SebastiaanKlippert/go-wkhtmltopdf"
 	"html/template"
 	"log"
+	"os"
+	"path/filepath"
 )
 
 func main() {
 	var (
-		err        error
-		data       map[string]any
-		htmlBuffer bytes.Buffer
+		err          error
+		data         []map[string]interface{}
+		files        []string
+		htmlTemplate *template.Template
+		htmlBuffer   bytes.Buffer
+		headerPath   string
+		footerPath   string
 	)
 
 	// read from params
-	templatePath := flag.String("t", "./templates/index.html", "Template file path")
+	name := flag.String("name", "htmlIndex", "Template name")
+	templateDir := flag.String("t", "examples/templates/simple", "Template file folder")
 	outputPath := flag.String("o", "./outputs/index.pdf", "Output file path")
-	jsonStr := flag.String("data", "{}", "Data in JSON format")
+	jsonStr := flag.String("data", "[]", "Data in JSON format")
+	debug := flag.Bool("debug", false, "Debug flag")
 	flag.Parse()
 
-	// parse json
+	// read template directory
+	dir, err := os.ReadDir(*templateDir)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// get path of all files within templateDir
+	for _, file := range dir {
+		filename := file.Name()
+		if filename == "footer.html" {
+			footerPath = filepath.Join(*templateDir, filename)
+		} else if filename == "header.html" {
+			headerPath = filepath.Join(*templateDir, filename)
+		}
+		filePath := filepath.Join(*templateDir, filename)
+		files = append(files, filePath)
+	}
+
+	// merge template
+	htmlTemplate, err = template.New(*name).ParseFiles(files...)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// parse json into data
 	err = json.Unmarshal([]byte(*jsonStr), &data)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// read HTML template into buffer
-	htmlTemplate, err := template.ParseFiles(*templatePath)
+	// merge template with data into buffer
+	err = htmlTemplate.ExecuteTemplate(&htmlBuffer, *name, data)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// merge template with data
-	err = htmlTemplate.Execute(&htmlBuffer, data)
-	if err != nil {
-		log.Fatal(err)
+	// prints rendered HTML if debug flag is passed
+	if *debug {
+		fmt.Println(&htmlBuffer)
 	}
 
 	// init pdf generator
@@ -46,10 +78,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// read from buffer
-	pdfGenerator.AddPage(wkhtmltopdf.NewPageReader(&htmlBuffer))
-	pdfGenerator.Orientation.Set(wkhtmltopdf.OrientationPortrait)
-	pdfGenerator.Dpi.Set(300)
+	// init page reader from buffer
+	page := wkhtmltopdf.NewPageReader(&htmlBuffer)
+
+	// optionally inject header and footer
+	if headerPath != "" {
+		page.HeaderHTML.Set(headerPath)
+	}
+	if footerPath != "" {
+		page.FooterHTML.Set(footerPath)
+	}
+
+	// add page into pdf generator (using default options)
+	pdfGenerator.AddPage(page)
 
 	// create pdf from htmlBuffer
 	err = pdfGenerator.Create()

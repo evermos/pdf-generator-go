@@ -1,0 +1,11 @@
+{{ define "htmlIndex" }}
+<!DOCTYPE html>
+<html lang="en">
+{{ template "htmlHead" . }}
+<body>
+  {{ range $item := . }}
+    {{ template "htmlInvoice" $item }}
+  {{ end }}
+</body>
+</html>
+{{ end }}
